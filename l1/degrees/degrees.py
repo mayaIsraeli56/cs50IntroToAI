@@ -68,7 +68,6 @@ def main():
     target = person_id_for_name(input("Name: "))
     if target is None:
         sys.exit("Person not found.")
-
     path = shortest_path(source, target)
 
     if path is None:
@@ -94,13 +93,12 @@ def shortest_path(source, target):
     # Initialize frontier to just the starting position
 
     start = Node(state=source, parent=None,
-                 action=person_movies_for_id(source))
+                 action=None)
 
-    solution = isTarget(start, target)
-    if solution:
-        return solution
+    if source == target:
+        return solution(start)
 
-    frontier = StackFrontier()
+    frontier = QueueFrontier()
     frontier.add(start)
 
     # Initialize an empty explored set
@@ -123,24 +121,23 @@ def shortest_path(source, target):
         for action, state in neighbors_for_person(node.state):
             if not frontier.contains_state(state) and state not in explored:
                 child = Node(state=state, parent=node, action=action)
-                solution = isTarget(child, target)
-                if solution:
-                    return solution
+                # print(action, state)
+
+                if child.state == target:
+                    return solution(child)
+
                 frontier.add(child)
+                
 
-    # raise NotImplementedError
+def solution(node):
+    solution = []
+    while node.parent is not None:
+        pair = (node.action, node.state)
+        solution.append(pair)
+        node = node.parent
 
-
-def isTarget(node, target):
-    # If node is the target, then we have a solution
-    if node.state == target:
-        solution = []
-        while node.parent is not None:
-            pair = (node.action, node.state)
-            solution.append(pair)
-            node = node.parent
-            solution.reverse()
-        return solution
+    solution.reverse()
+    return solution
 
 
 def person_id_for_name(name):
@@ -167,10 +164,6 @@ def person_id_for_name(name):
         return None
     else:
         return person_ids[0]
-
-
-def person_movies_for_id(id):
-    return people[id]["movies"]
 
 
 def neighbors_for_person(person_id):
