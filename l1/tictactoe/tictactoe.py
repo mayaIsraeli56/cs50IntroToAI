@@ -143,7 +143,6 @@ def minimax(board):
         optVal = MIN
         for action in actions(board):
             val = minValue(result(board, action), MAX)
-            print(val)
             if val > optVal:
                 optVal = val
                 act = action
@@ -151,7 +150,6 @@ def minimax(board):
         optVal = MAX
         for action in actions(board):
             val = maxValue(result(board, action), MIN)
-            print(val)
             if val < optVal:
                 optVal = val
                 act = action
@@ -177,10 +175,3 @@ def minValue(board, curVal):
         curVal = min(curVal, maxValue(result(board, action), MIN))
 
     return curVal
-
-# def main():
-#     board = initial_state()
-
-
-# if __name__ == "__main__":
-#     main()
